@@ -1,21 +1,36 @@
-import { useState } from "react";
+import { useState, type ChangeEvent } from "react";
 import ProductCard from "./components/ProductCard";
 import Modal from "./components/ui/Modal";
 import Button from "./components/ui/Button";
 import { formInputsList, productList } from "./data";
 import Input from "./components/ui/Input";
+import type { IProduct } from "./interfaces";
 
 interface IProps {}
 
 const App = ({}: IProps) => {
+  const [product, setProduct] = useState <IProduct> ({
+    title: '',
+    description: '',
+    imageURL: '',
+    price: '',
+    colors: [],
+    category: {
+      name: '',
+      imageURL: ''
+    }
+  })
   const [isOpen, setIsOpen] = useState(false);
 
-  function open() {
-    setIsOpen(true);
-  }
-
-  function close() {
-    setIsOpen(false);
+  const open = () => {setIsOpen(true);}
+  function close() {setIsOpen(false);}
+  const onCangeHandeler = (event: ChangeEvent<HTMLInputElement>) => {
+    const {value, name} = event.target
+    
+    setProduct({
+      ...product,
+      [name]: value,
+    })
   }
 
   const renderProductList = productList.map((product) => (
@@ -29,7 +44,7 @@ const App = ({}: IProps) => {
       >
         {input.label}
       </label>
-      <Input type="text" id={input.id} name={input.name} />
+      <Input type="text" id={input.id} name={input.name} value={''} onChange={onCangeHandeler} />
     </div>
   ));
   return (
