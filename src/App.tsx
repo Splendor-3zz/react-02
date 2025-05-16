@@ -44,7 +44,7 @@ const App = ({}: IProps) => {
       >
         {input.label}
       </label>
-      <Input type="text" id={input.id} name={input.name} value={''} onChange={onCangeHandeler} />
+      <Input type="text" id={input.id} name={input.name} value={product[input.name]} onChange={onCangeHandeler} />
     </div>
   ));
   return (
