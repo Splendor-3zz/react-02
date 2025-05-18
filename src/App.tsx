@@ -2,11 +2,13 @@ import { useState, type ChangeEvent, type FormEvent } from "react";
 import ProductCard from "./components/ProductCard";
 import Modal from "./components/ui/Modal";
 import Button from "./components/ui/Button";
-import { formInputsList, productList } from "./data";
+import { colors, formInputsList, productList } from "./data";
 import Input from "./components/ui/Input";
 import type { IProduct } from "./interfaces";
 import { productValidation } from "./validation";
 import ErrorMessage from "./components/ui/ErrorMessage";
+import CircleColors from "./components/ui/CircleColors";
+import { v4 as uuid } from 'uuid';
 
 const App = () => {
 
@@ -21,9 +23,12 @@ const App = () => {
       imageURL: ''
     }
   };
+  const [products, setProducts] = useState <IProduct[]> (productList)
   const [product, setProduct] = useState <IProduct> (defultProduct)
   const [errors, setErrors] = useState ({title:"", description:"", imageURL:"", price:""});
+  const [tempColors, setTempColor] = useState <string[]>([])
   const [isOpen, setIsOpen] = useState(false);
+  console.log(tempColors)
 
   const open = () => {setIsOpen(true);}
   function close() {setIsOpen(false);}
@@ -60,10 +65,13 @@ const App = () => {
       return;
     }
 
-    console.log("send this data")
+    setProducts(prev => [{...product, id: uuid(), colors: tempColors}, ...prev]);
+    setProduct(defultProduct);
+    setTempColor([]);
+    close();
   }
 
-  const renderProductList = productList.map((product) => (
+  const renderProductList = products.map((product) => (
     <ProductCard key={product.id} product={product} />
   ));
   const renderFormInputList = formInputsList.map((input) => (
@@ -79,6 +87,16 @@ const App = () => {
     </div>
   ));
 
+  const renderProductColors = colors.map(color => <CircleColors key={color} color={color} onClick={() =>{
+    if (tempColors.includes(color)){
+      setTempColor(prev => prev.filter(item => item !== color));
+      return
+    }
+    setTempColor(prev =>[...prev, color]);
+  }}
+  />
+);
+
   return (
     /* */
     <main className="container mx-auto">
@@ -88,9 +106,17 @@ const App = () => {
       <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2 m-5">
         {renderProductList}
       </div>
-      <Modal isOpen={isOpen} closeModal={close} title="Add a new product">
+      <Modal isOpen={isOpen} closeModal={onCancel} title="Add a new product">
         <form className="space-y-3" onSubmit={supmitHandler}>
           {renderFormInputList}
+          <div className="flex items-center space-x-2"> {renderProductColors}</div>
+          <div className="flex items-center space-x-2">
+            {tempColors.map(color => (
+              <span key={color} className=" p-1 mr-1 mb-1 rounded-md text-xs text-white" style={{backgroundColor: color}}>
+                {color}
+              </span>
+            ))}
+          </div>
           <div className="flex items-center space-x-3">
             <Button className=" bg-red-700" onClick={onCancel}>
               Cancel
