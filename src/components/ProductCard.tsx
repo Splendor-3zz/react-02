@@ -8,18 +8,19 @@ interface IProps {
   product: IProduct;
   setProductToEdit: (product: IProduct) => void;
   openEdit: () => void;
+  setProductToEditInx: (value: number) => void;
+  idx: number;
 }
 
-const ProductCard = ({ product, setProductToEdit, openEdit }: IProps) => {
+const ProductCard = ({ product, setProductToEdit, openEdit, setProductToEditInx, idx }: IProps) => {
   const { title, description, imageURL, price, colors, category } = product;
 
-  const renderProductColors = colors.map((color) => (
-    <CircleColors key={color} color={color} />
-  ));
+  const renderProductColors = colors.map(color => <CircleColors key={color} color={color} />);
 
   const onEdit = () => {
     setProductToEdit(product);
     openEdit();
+    setProductToEditInx(idx)
   };
 
   return (
@@ -35,7 +36,7 @@ const ProductCard = ({ product, setProductToEdit, openEdit }: IProps) => {
       <div className="flex items-center space-x-2"> {renderProductColors}</div>
 
       <div className="flex items-center justify-between">
-        <span>{price}</span>
+        <span>${price}</span>
         <Image
           imageURL={category.imageURL}
           alt="product name"
