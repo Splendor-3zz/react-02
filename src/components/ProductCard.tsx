@@ -39,7 +39,7 @@ const ProductCard = ({ product, setProductToEdit, openEdit, setProductToEditInx,
       <h3>{title}</h3>
       <p className="text-sm min-h-[60px]">{txtSlicer(description)}</p>
 
-      <div className="flex items-center flex-wrap space-x-2"> {!colors.length ? <p className="min-h-[20px]">Not available colors!</p> : renderProductColors} </div>
+      <div className="flex items-center flex-wrap space-x-2 min-h-[50px]"> {!colors.length ? <p className="min-h-[50px]">Not available colors!</p> : renderProductColors} </div>
 
       <div className="flex items-center justify-between">
         <span>${price}</span>
