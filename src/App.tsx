@@ -11,6 +11,7 @@ import CircleColors from "./components/ui/CircleColors";
 import { v4 as uuid } from "uuid";
 import Selects from "./components/ui/Selects";
 import type { TProductName } from "./types";
+import toast, { Toaster } from "react-hot-toast";
 
 const App = () => {
   const defultProduct = {
@@ -39,6 +40,7 @@ const App = () => {
   const [tempColors, setTempColor] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenEditModal, setIsOpenEditModal] = useState(false);
+  const [isOpenConfirmModal, setIsOpenConfirmModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
   console.log(productToEditIdx);
 
@@ -55,6 +57,9 @@ const App = () => {
   const closeEdit = () => {
     setIsOpenEditModal(false);
   };
+
+  const closeConfirmModal = () => setIsOpenConfirmModal(false);
+  const openConfirmModal = () => setIsOpenConfirmModal(true);
 
   const onChangeHandeler = (event: ChangeEvent<HTMLInputElement>) => {
     const { value, name } = event.target;
@@ -89,6 +94,13 @@ const App = () => {
     close();
   };
 
+  const removeProductHandler = () => {
+    const filtered = products.filter(product => product.id !== productToEdit.id);
+    setProducts(filtered);
+    closeConfirmModal();
+    toast("Product has been deleted", {style: {backgroundColor: "black", color: "white"}});
+  };
+
   const supmitHandler = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     const { title, description, price, imageURL } = product;
@@ -115,6 +127,7 @@ const App = () => {
     setProduct(defultProduct);
     setTempColor([]);
     close();
+    toast("Product has been added successfully", {style: {backgroundColor: "black", color: "white"}});
   };
 
   const supmitEditHandler = (event: FormEvent<HTMLFormElement>): void => {
@@ -142,6 +155,7 @@ const App = () => {
     setProductToEdit(defultProduct);
     setTempColor([]);
     closeEdit();
+    toast("Product has been Edited successfully", {style: {backgroundColor: "black", color: "white"}});
   };
 
   // RENDER
@@ -153,6 +167,7 @@ const App = () => {
       openEdit={openEdit}
       idx={idx}
       setProductToEditInx={setProductToEditIdx}
+      openConfirmModal={openConfirmModal}
     />
   ));
   const renderFormInputList = formInputsList.map((input) => (
@@ -285,7 +300,9 @@ const App = () => {
           {/* {renderFormInputList} */}
           <Selects
             selected={productToEdit.category}
-            setSelected={value => setProductToEdit({ ...productToEdit, category: value })}
+            setSelected={(value) =>
+              setProductToEdit({ ...productToEdit, category: value })
+            }
           />
           <div className="flex flex-wrap items-center space-x-2">
             {" "}
@@ -310,6 +327,32 @@ const App = () => {
           </div>
         </form>
       </Modal>
+
+      {/* DELETE PRODUCT CONFIRM MODAL */}
+      <Modal
+        isOpen={isOpenConfirmModal}
+        closeModal={closeConfirmModal}
+        title="Are you sure you want to remove this Product from your Store?"
+        description="Deleting this product will remove it permanently from your inventory. Any associated data, sales history, and other related information will also be deleted. Please make sure this is the intended action."
+      >
+        <div className="flex items-center space-x-3">
+          <Button
+            className="bg-[#c2344d] hover:bg-red-800"
+            onClick={removeProductHandler}
+          >
+            Yes, remove
+          </Button>
+          <Button
+            type="button"
+            className="bg-[#f5f5fa] hover:bg-gray-300 !text-black"
+            onClick={closeConfirmModal}
+          >
+            Cancel
+          </Button>
+        </div>
+      </Modal>
+
+      <Toaster />
     </main>
   );
 };
